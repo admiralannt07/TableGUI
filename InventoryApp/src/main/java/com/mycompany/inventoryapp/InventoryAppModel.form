@@ -29,8 +29,8 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Component id="jPanel1" max="32767" attributes="0"/>
           <Component id="jPanel2" alignment="0" max="32767" attributes="0"/>
-          <Component id="jPanel3" alignment="0" max="32767" attributes="0"/>
           <Component id="jPanel4" alignment="0" max="32767" attributes="0"/>
+          <Component id="jPanel3" alignment="1" max="32767" attributes="0"/>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
@@ -42,7 +42,7 @@
               <EmptySpace max="-2" attributes="0"/>
               <Component id="jPanel3" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="-2" attributes="0"/>
-              <Component id="jPanel4" min="-2" max="-2" attributes="0"/>
+              <Component id="jPanel4" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -59,8 +59,8 @@
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="138" max="-2" attributes="0"/>
-                  <Component id="TitleLabel" min="-2" pref="206" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="TitleLabel" min="-2" pref="488" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
@@ -85,7 +85,7 @@
               <Color blue="44" green="5b" red="52" type="rgb"/>
             </Property>
             <Property name="horizontalAlignment" type="int" value="0"/>
-            <Property name="text" type="java.lang.String" value="INVENTORY APP"/>
+            <Property name="text" type="java.lang.String" value="ELECTRONIC STORE INVENTORY APP"/>
           </Properties>
         </Component>
       </SubComponents>
@@ -100,55 +100,73 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="1" attributes="0">
-                  <EmptySpace max="32767" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <EmptySpace min="-2" pref="103" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="JumlahStok" alignment="0" min="-2" pref="119" max="-2" attributes="0"/>
-                      <Component id="NamaBarang" alignment="0" min="-2" pref="119" max="-2" attributes="0"/>
-                      <Component id="Harga" alignment="0" min="-2" pref="119" max="-2" attributes="0"/>
-                      <Component id="KategoriBarang" alignment="0" min="-2" pref="119" max="-2" attributes="0"/>
-                      <Component id="StatusBarang" alignment="0" min="-2" pref="119" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="0" attributes="0">
-                      <Component id="TxtHarga" min="-2" pref="256" max="-2" attributes="0"/>
-                      <Component id="TxtNamaBarang" min="-2" pref="256" max="-2" attributes="0"/>
-                      <Component id="CmbKategori" alignment="0" min="-2" pref="107" max="-2" attributes="0"/>
-                      <Group type="102" alignment="0" attributes="0">
-                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                              <Component id="RadioBtnBaru" max="32767" attributes="0"/>
-                              <Component id="SpinnerStok" min="-2" pref="55" max="-2" attributes="0"/>
+                      <Component id="Harga" min="-2" pref="119" max="-2" attributes="0"/>
+                      <Group type="103" alignment="0" groupAlignment="1" attributes="0">
+                          <Group type="102" alignment="1" attributes="0">
+                              <Component id="TipeBarang" min="-2" pref="119" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                              <Component id="CmbTipeBarang" min="-2" pref="149" max="-2" attributes="0"/>
                           </Group>
-                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="RadioBtnBekas" min="-2" pref="67" max="-2" attributes="0"/>
-                              <Component id="TxtStok" min="-2" pref="40" max="-2" attributes="0"/>
+                          <Group type="103" alignment="1" groupAlignment="0" attributes="0">
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Component id="MerkBarang" min="-2" pref="119" max="-2" attributes="0"/>
+                                  <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                                  <Component id="CmbMerk" min="-2" pref="149" max="-2" attributes="0"/>
+                              </Group>
+                              <Group type="102" alignment="0" attributes="0">
+                                  <Group type="103" groupAlignment="0" attributes="0">
+                                      <Component id="JumlahStok" alignment="0" min="-2" pref="119" max="-2" attributes="0"/>
+                                      <Component id="KategoriBarang" alignment="0" min="-2" pref="119" max="-2" attributes="0"/>
+                                      <Component id="StatusBarang" alignment="0" min="-2" pref="119" max="-2" attributes="0"/>
+                                  </Group>
+                                  <EmptySpace min="-2" pref="27" max="-2" attributes="0"/>
+                                  <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                                      <Group type="102" alignment="0" attributes="0">
+                                          <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                                              <Component id="RadioBtnBaru" max="32767" attributes="0"/>
+                                              <Component id="SpinnerStok" min="-2" pref="55" max="-2" attributes="0"/>
+                                          </Group>
+                                          <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                                          <Component id="RadioBtnBekas" min="-2" pref="67" max="-2" attributes="0"/>
+                                      </Group>
+                                      <Component id="CmbKategori" max="32767" attributes="0"/>
+                                      <Component id="TxtHarga" alignment="0" min="-2" pref="149" max="-2" attributes="0"/>
+                                  </Group>
+                              </Group>
                           </Group>
                       </Group>
                   </Group>
-                  <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
+                  <EmptySpace max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
               <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="NamaBarang" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="TxtNamaBarang" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
-                  <Group type="103" groupAlignment="3" attributes="0">
-                      <Component id="Harga" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="TxtHarga" alignment="3" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="33" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="KategoriBarang" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="CmbKategori" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace type="separate" max="-2" attributes="0"/>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="MerkBarang" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="CmbMerk" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="TipeBarang" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="CmbTipeBarang" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
+                  <Group type="103" groupAlignment="3" attributes="0">
+                      <Component id="Harga" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="TxtHarga" alignment="3" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <EmptySpace min="-2" pref="13" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="StatusBarang" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="RadioBtnBaru" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -158,7 +176,6 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="JumlahStok" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="SpinnerStok" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="TxtStok" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace pref="31" max="32767" attributes="0"/>
               </Group>
@@ -166,17 +183,6 @@
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Component class="javax.swing.JLabel" name="NamaBarang">
-          <Properties>
-            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
-              <Font name="Poppins" size="14" style="0"/>
-            </Property>
-            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
-              <Color blue="44" green="5b" red="52" type="rgb"/>
-            </Property>
-            <Property name="text" type="java.lang.String" value="Nama Barang:"/>
-          </Properties>
-        </Component>
         <Component class="javax.swing.JLabel" name="KategoriBarang">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
@@ -188,7 +194,20 @@
             <Property name="text" type="java.lang.String" value="Kategori Barang:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="JumlahStok">
+        <Component class="javax.swing.JComboBox" name="CmbKategori">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="0"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CmbKategoriActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JLabel" name="MerkBarang">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Poppins" size="14" style="0"/>
@@ -196,10 +215,23 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="44" green="5b" red="52" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Jumlah Stok:"/>
+            <Property name="text" type="java.lang.String" value="Merk Barang:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JLabel" name="StatusBarang">
+        <Component class="javax.swing.JComboBox" name="CmbMerk">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="0"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CmbMerkActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+          </AuxValues>
+        </Component>
+        <Component class="javax.swing.JLabel" name="TipeBarang">
           <Properties>
             <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
               <Font name="Poppins" size="14" style="0"/>
@@ -207,12 +239,21 @@
             <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
               <Color blue="44" green="5b" red="52" type="rgb"/>
             </Property>
-            <Property name="text" type="java.lang.String" value="Status Barang:"/>
+            <Property name="text" type="java.lang.String" value="Tipe Barang:"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JSpinner" name="SpinnerStok">
-        </Component>
-        <Component class="javax.swing.JTextField" name="TxtNamaBarang">
+        <Component class="javax.swing.JComboBox" name="CmbTipeBarang">
+          <Properties>
+            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
+              <StringArray count="0"/>
+            </Property>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CmbTipeBarangActionPerformed"/>
+          </Events>
+          <AuxValues>
+            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
+          </AuxValues>
         </Component>
         <Component class="javax.swing.JLabel" name="Harga">
           <Properties>
@@ -227,23 +268,16 @@
         </Component>
         <Component class="javax.swing.JTextField" name="TxtHarga">
         </Component>
-        <Component class="javax.swing.JComboBox" name="CmbKategori">
+        <Component class="javax.swing.JLabel" name="StatusBarang">
           <Properties>
-            <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
-              <StringArray count="4">
-                <StringItem index="0" value="Elektronik"/>
-                <StringItem index="1" value="Furniture"/>
-                <StringItem index="2" value="Pakaian"/>
-                <StringItem index="3" value="Makanan"/>
-              </StringArray>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Poppins" size="14" style="0"/>
             </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="44" green="5b" red="52" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Status Barang:"/>
           </Properties>
-          <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="CmbKategoriActionPerformed"/>
-          </Events>
-          <AuxValues>
-            <AuxValue name="JavaCodeGenerator_TypeParameters" type="java.lang.String" value="&lt;String&gt;"/>
-          </AuxValues>
         </Component>
         <Component class="javax.swing.JRadioButton" name="RadioBtnBaru">
           <Properties>
@@ -261,7 +295,18 @@
             <Property name="text" type="java.lang.String" value="Bekas"/>
           </Properties>
         </Component>
-        <Component class="javax.swing.JTextField" name="TxtStok">
+        <Component class="javax.swing.JLabel" name="JumlahStok">
+          <Properties>
+            <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+              <Font name="Poppins" size="14" style="0"/>
+            </Property>
+            <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
+              <Color blue="44" green="5b" red="52" type="rgb"/>
+            </Property>
+            <Property name="text" type="java.lang.String" value="Jumlah Stok:"/>
+          </Properties>
+        </Component>
+        <Component class="javax.swing.JSpinner" name="SpinnerStok">
         </Component>
       </SubComponents>
     </Container>
@@ -275,18 +320,20 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Group type="102" alignment="0" attributes="0">
-                  <EmptySpace max="-2" attributes="0"/>
-                  <Component id="BtnTambah" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="BtnEdit" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="12" max="32767" attributes="0"/>
-                  <Component id="BtnHapus" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace type="unrelated" max="-2" attributes="0"/>
-                  <Component id="BtnReset" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace min="-2" pref="12" max="-2" attributes="0"/>
-                  <Component id="BtnTotalStok" min="-2" max="-2" attributes="0"/>
+              <Group type="102" alignment="1" attributes="0">
                   <EmptySpace min="-2" pref="18" max="-2" attributes="0"/>
+                  <Component id="BtnTambah" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="BtnPerbarui" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="BtnCari" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace pref="9" max="32767" attributes="0"/>
+                  <Component id="BtnHapus" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="BtnReset" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
+                  <Component id="BtnExport" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="-2" pref="24" max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -296,12 +343,13 @@
                   <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="BtnTambah" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="BtnEdit" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="BtnPerbarui" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="BtnHapus" alignment="3" min="-2" max="-2" attributes="0"/>
-                      <Component id="BtnTotalStok" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="BtnExport" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="BtnReset" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="BtnCari" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="21" max="32767" attributes="0"/>
+                  <EmptySpace pref="23" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -315,12 +363,12 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnTambahActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="BtnEdit">
+        <Component class="javax.swing.JButton" name="BtnPerbarui">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Edit"/>
+            <Property name="text" type="java.lang.String" value="Perbarui"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnEditActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnPerbaruiActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="BtnHapus">
@@ -331,12 +379,12 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnHapusActionPerformed"/>
           </Events>
         </Component>
-        <Component class="javax.swing.JButton" name="BtnTotalStok">
+        <Component class="javax.swing.JButton" name="BtnExport">
           <Properties>
-            <Property name="text" type="java.lang.String" value="Tampilkan Total Stok"/>
+            <Property name="text" type="java.lang.String" value="Export"/>
           </Properties>
           <Events>
-            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnTotalStokActionPerformed"/>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnExportActionPerformed"/>
           </Events>
         </Component>
         <Component class="javax.swing.JButton" name="BtnReset">
@@ -345,6 +393,14 @@
           </Properties>
           <Events>
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnResetActionPerformed"/>
+          </Events>
+        </Component>
+        <Component class="javax.swing.JButton" name="BtnCari">
+          <Properties>
+            <Property name="text" type="java.lang.String" value="Cari"/>
+          </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="BtnCariActionPerformed"/>
           </Events>
         </Component>
       </SubComponents>
@@ -359,17 +415,20 @@
       <Layout>
         <DimensionLayout dim="0">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="jScrollPane1" alignment="0" max="32767" attributes="0"/>
+              <Component id="jScrollPane" alignment="0" max="32767" attributes="0"/>
           </Group>
         </DimensionLayout>
         <DimensionLayout dim="1">
           <Group type="103" groupAlignment="0" attributes="0">
-              <Component id="jScrollPane1" min="-2" pref="215" max="-2" attributes="0"/>
+              <Group type="102" alignment="0" attributes="0">
+                  <Component id="jScrollPane" min="-2" max="-2" attributes="0"/>
+                  <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+              </Group>
           </Group>
         </DimensionLayout>
       </Layout>
       <SubComponents>
-        <Container class="javax.swing.JScrollPane" name="jScrollPane1">
+        <Container class="javax.swing.JScrollPane" name="jScrollPane">
           <AuxValues>
             <AuxValue name="autoScrollPane" type="java.lang.Boolean" value="true"/>
           </AuxValues>
@@ -379,13 +438,13 @@
             <Component class="javax.swing.JTable" name="OutputTable">
               <Properties>
                 <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
-                  <Table columnCount="6" rowCount="12">
-                    <Column editable="true" title="No." type="java.lang.Integer"/>
+                  <Table columnCount="6" rowCount="0">
+                    <Column editable="true" title="No." type="java.lang.Object"/>
                     <Column editable="true" title="Nama Barang" type="java.lang.Object"/>
                     <Column editable="true" title="Kategori" type="java.lang.Object"/>
                     <Column editable="true" title="Status" type="java.lang.Object"/>
-                    <Column editable="true" title="Jumlah Stok" type="java.lang.Object"/>
                     <Column editable="true" title="Harga" type="java.lang.Object"/>
+                    <Column editable="true" title="Jumlah Stok" type="java.lang.Object"/>
                   </Table>
                 </Property>
                 <Property name="columnModel" type="javax.swing.table.TableColumnModel" editor="org.netbeans.modules.form.editors2.TableColumnModelEditor">
