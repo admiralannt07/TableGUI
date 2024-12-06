@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.io.FileWriter;
 import java.io.IOException;
 import javax.swing.table.TableModel;
+import java.text.NumberFormat;
+import java.util.Locale;
 
 /**
  *
@@ -22,6 +24,11 @@ public class InventoryAppModel extends javax.swing.JFrame {
     private HashMap<String, String[]> brandMap = new HashMap<>();
     private HashMap<String, String[]> typeMap = new HashMap<>();
     private ArrayList<Object[]> originalTableData = new ArrayList<>();
+
+    public String formatHarga(int harga) {
+        NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
+        return formatter.format(harga).replace("Rp", "Rp.").replace(",00", "");
+    }
 
     /**
      * Creates new form InventoryAppModel
@@ -42,6 +49,9 @@ public class InventoryAppModel extends javax.swing.JFrame {
                 0
         );
         OutputTable.setModel(model);
+
+        BtnExport.setToolTipText("Ekspor data ke file CSV untuk disimpan.");
+        setupExportButton(BtnExport, OutputTable); // Link button to export functionality
     }
 
     private void populateBrandAndTypeData() {
@@ -391,8 +401,6 @@ public class InventoryAppModel extends javax.swing.JFrame {
         });
 
         BtnExport.setText("Export");
-		BtnExport.setToolTipText("Ekspor data ke file CSV untuk disimpan.");
-		setupExportButton(BtnExport, OutputTable);
         BtnExport.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 BtnExportActionPerformed(evt);
@@ -515,6 +523,7 @@ public class InventoryAppModel extends javax.swing.JFrame {
         // Validate numeric input for price
         try {
             int harga = Integer.parseInt(hargaInput);
+            String formattedHarga = formatHarga(harga);
 
             // Create item name
             String namaBarang = merk + " " + tipe;
@@ -527,7 +536,7 @@ public class InventoryAppModel extends javax.swing.JFrame {
                 namaBarang,
                 kategori,
                 statusBarang,
-                harga,
+                formattedHarga,
                 jumlahStok
             });
 
@@ -537,7 +546,7 @@ public class InventoryAppModel extends javax.swing.JFrame {
                 namaBarang,
                 kategori,
                 statusBarang,
-                harga,
+                formattedHarga,
                 jumlahStok
             });
 
@@ -592,14 +601,16 @@ public class InventoryAppModel extends javax.swing.JFrame {
             String brand = (String) CmbMerk.getSelectedItem();
             String type = (String) CmbTipeBarang.getSelectedItem();
             String status = RadioBtnBaru.isSelected() ? "Baru" : "Bekas";
-            String price = TxtHarga.getText();
+            String price = TxtHarga.getText().trim();
+            int harga = Integer.parseInt(price);
+            String formattedHarga = formatHarga(harga);
             int stock = (int) SpinnerStok.getValue();
             String itemName = brand + " - " + type;
 
             OutputTable.setValueAt(itemName, selectedRow, 1);
             OutputTable.setValueAt(category, selectedRow, 2);
             OutputTable.setValueAt(status, selectedRow, 3);
-            OutputTable.setValueAt(Integer.valueOf(price), selectedRow, 4);
+            OutputTable.setValueAt(formattedHarga, selectedRow, 4);
             OutputTable.setValueAt(stock, selectedRow, 5);
 
             JOptionPane.showMessageDialog(this, "Data berhasil diperbarui!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
@@ -768,7 +779,7 @@ public class InventoryAppModel extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane;
     // End of variables declaration//GEN-END:variables
-private boolean validateInputs() {
+    private boolean validateInputs() {
         if (CmbKategori.getSelectedIndex() == 0) {
             return false;
         }
