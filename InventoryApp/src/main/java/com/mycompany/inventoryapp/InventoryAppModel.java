@@ -38,6 +38,8 @@ public class InventoryAppModel extends javax.swing.JFrame {
 
         Color bg = new Color(211, 241, 223);
         getContentPane().setBackground(bg);
+        
+        SpinnerStok.setModel(new javax.swing.SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
 
         populateBrandAndTypeData(); // Populate the brand and type data
         populateInitialCategory(); // Populate CmbKategori with placeholders
@@ -55,17 +57,28 @@ public class InventoryAppModel extends javax.swing.JFrame {
     }
 
     private void populateBrandAndTypeData() {
-        brandMap.put("Laptop", new String[]{"Dell", "HP", "Lenovo", "Asus"});
-        brandMap.put("Smartphone", new String[]{"Samsung", "Apple", "Xiaomi", "Realme"});
+        // Data for Brand and Types
+        brandMap.put("Laptop", new String[]{"Dell", "HP", "Lenovo", "Asus", "Acer", "MSI", "Apple"});
+        brandMap.put("Smartphone", new String[]{"Samsung", "Apple", "Xiaomi", "Realme", "Oppo", "Vivo", "Google Pixel", "OnePlus"});
 
-        typeMap.put("Dell", new String[]{"Inspiron", "XPS", "Alienware"});
-        typeMap.put("HP", new String[]{"Pavilion", "Envy", "Omen"});
-        typeMap.put("Lenovo", new String[]{"Legion", "Ideapad", "Thinkpad"});
-        typeMap.put("Asus", new String[]{"ROG", "Vivobook", "Zenbook"});
-        typeMap.put("Samsung", new String[]{"Galaxy S", "Galaxy A", "Galaxy Note"});
-        typeMap.put("Apple", new String[]{"iPhone SE", "iPhone 13", "iPhone 14", "iPhone 15", "iPhone 16"});
-        typeMap.put("Xiaomi", new String[]{"POCO", "Redmi Note", "Redmi"});
-        typeMap.put("Realme", new String[]{"Narzo", "GT", "C Series"});
+        // Laptop types
+        typeMap.put("Dell", new String[]{"Inspiron 15", "Inspiron 14", "XPS 13", "XPS 15", "Alienware m15", "Alienware x14"});
+        typeMap.put("HP", new String[]{"Pavilion 14", "Pavilion 15", "Envy 13", "Envy x360", "Spectre x360", "Omen 15"});
+        typeMap.put("Lenovo", new String[]{"ThinkPad X1", "ThinkPad T14", "Legion 5", "Legion 7", "IdeaPad 3", "IdeaPad Slim 7"});
+        typeMap.put("Asus", new String[]{"ROG Zephyrus G14", "ROG Strix G15", "TUF Gaming A15", "VivoBook 15", "ZenBook Duo", "ExpertBook B9"});
+        typeMap.put("Acer", new String[]{"Aspire 5", "Nitro 5", "Predator Helios 300", "Predator Triton 500", "Swift 3", "Swift X"});
+        typeMap.put("MSI", new String[]{"GF63 Thin", "GE76 Raider", "GP66 Leopard", "Creator Z16", "Stealth 15M", "Modern 14"});
+        typeMap.put("Apple", new String[]{"MacBook Air M1", "MacBook Air M2", "MacBook Pro 13", "MacBook Pro 14", "MacBook Pro 16"});
+
+        // Smartphone types
+        typeMap.put("Samsung", new String[]{"Galaxy S23 Ultra", "Galaxy S22", "Galaxy Z Fold 4", "Galaxy A73", "Galaxy M14", "Galaxy S10 Ultra"});
+        typeMap.put("Apple", new String[]{"iPhone 13 Mini", "iPhone 14 Pro", "iPhone 14 Pro Max", "iPhone SE 2022", "iPhone XR", "iPhone 12"});
+        typeMap.put("Xiaomi", new String[]{"Redmi Note 12", "POCO F5", "Xiaomi 13", "Xiaomi 13 Ultra", "Mi Mix Fold 2", "Redmi K60"});
+        typeMap.put("Realme", new String[]{"Narzo 60", "Realme GT Neo 5", "Realme C55", "Realme 11 Pro", "Realme 10", "Narzo 50"});
+        typeMap.put("Oppo", new String[]{"Find X5 Pro", "Reno 8", "Reno 9 Pro", "Oppo A96", "Find N2 Flip", "A78"});
+        typeMap.put("Vivo", new String[]{"X80 Pro", "Vivo T2 5G", "Y100", "Y16", "V27 Pro", "V25"});
+        typeMap.put("Google Pixel", new String[]{"Pixel 7 Pro", "Pixel 6a", "Pixel Fold", "Pixel 7a", "Pixel 5", "Pixel 4 XL"});
+        typeMap.put("OnePlus", new String[]{"OnePlus 11", "OnePlus 10 Pro", "Nord 2T", "Nord CE 3 Lite", "OnePlus Ace", "OnePlus 9R"});
     }
 
     private void populateInitialCategory() {
@@ -123,28 +136,31 @@ public class InventoryAppModel extends javax.swing.JFrame {
             String category = (String) OutputTable.getValueAt(selectedRow, 2);
             String itemName = (String) OutputTable.getValueAt(selectedRow, 1);
             String status = (String) OutputTable.getValueAt(selectedRow, 3);
-            String price = String.valueOf(OutputTable.getValueAt(selectedRow, 4));
+            String priceWithCurrency = (String) OutputTable.getValueAt(selectedRow, 4);
             int stock = (int) OutputTable.getValueAt(selectedRow, 5);
 
-            String[] itemParts = itemName.split(" - ");
-            String brand = itemParts[0];
+            // Split itemName into brand and type
+            String[] itemParts = itemName.split(" ");
+            String brand = itemParts.length > 0 ? itemParts[0] : "";
             String type = itemParts.length > 1 ? itemParts[1] : "";
 
+            // Remove currency and formatting from price
+            String price = priceWithCurrency.replaceAll("[^\\d]", "");
+
+            // Set the values in the input fields
             CmbKategori.setSelectedItem(category);
-            updateBrands();
+            updateBrands(); // Ensure the brand dropdown is populated
             CmbMerk.setSelectedItem(brand);
-            updateTypes();
+            updateTypes(); // Ensure the type dropdown is populated
             CmbTipeBarang.setSelectedItem(type);
+            TxtHarga.setText(price); // Set only numeric value
+            SpinnerStok.setValue(stock);
 
-            TxtHarga.setText(price);
-
-            if ("Baru".equals(status)) {
+            if ("Baru".equalsIgnoreCase(status)) {
                 RadioBtnBaru.setSelected(true);
             } else {
                 RadioBtnBekas.setSelected(true);
             }
-
-            SpinnerStok.setValue(stock);
         }
     }
 
@@ -310,6 +326,8 @@ public class InventoryAppModel extends javax.swing.JFrame {
         JumlahStok.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
         JumlahStok.setForeground(new java.awt.Color(82, 91, 68));
         JumlahStok.setText("Jumlah Stok:");
+
+        SpinnerStok.setToolTipText("");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
