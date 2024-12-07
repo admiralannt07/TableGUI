@@ -67,7 +67,7 @@ public class InventoryAppModel extends javax.swing.JFrame {
         typeMap.put("Lenovo", new String[]{"ThinkPad X1", "ThinkPad T14", "Legion 5", "Legion 7", "IdeaPad 3", "IdeaPad Slim 7"});
         typeMap.put("Asus", new String[]{"ROG Zephyrus G14", "ROG Strix G15", "TUF Gaming A15", "VivoBook 15", "ZenBook Duo", "ExpertBook B9"});
         typeMap.put("Acer", new String[]{"Aspire 5", "Nitro 5", "Predator Helios 300", "Predator Triton 500", "Swift 3", "Swift X"});
-        typeMap.put("MSI", new String[]{"GF63 Thin", "GE76 Raider", "GP66 Leopard", "Creator Z16", "Stealth 15M", "Modern 14"});
+        typeMap.put("MSI", new String[]{"GF63 Thin", "GE76 Raider", "GP66 Leopard", "Creator Z16", "Stealth 15M", "Modern 14", "Titan GT77"});
         typeMap.put("Apple", new String[]{"MacBook Air M1", "MacBook Air M2", "MacBook Pro 13", "MacBook Pro 14", "MacBook Pro 16"});
 
         // Smartphone types
