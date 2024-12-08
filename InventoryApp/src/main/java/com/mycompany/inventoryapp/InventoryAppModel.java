@@ -38,7 +38,7 @@ public class InventoryAppModel extends javax.swing.JFrame {
 
         Color bg = new Color(211, 241, 223);
         getContentPane().setBackground(bg);
-        
+
         SpinnerStok.setModel(new javax.swing.SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
 
         populateBrandAndTypeData(); // Populate the brand and type data
@@ -140,7 +140,7 @@ public class InventoryAppModel extends javax.swing.JFrame {
             int stock = (int) OutputTable.getValueAt(selectedRow, 5);
 
             // Split itemName into brand and type
-            String[] itemParts = itemName.split(" ");
+            String[] itemParts = itemName.split(" ", 2);
             String brand = itemParts.length > 0 ? itemParts[0] : "";
             String type = itemParts.length > 1 ? itemParts[1] : "";
 
@@ -152,7 +152,12 @@ public class InventoryAppModel extends javax.swing.JFrame {
             updateBrands(); // Ensure the brand dropdown is populated
             CmbMerk.setSelectedItem(brand);
             updateTypes(); // Ensure the type dropdown is populated
-            CmbTipeBarang.setSelectedItem(type);
+
+            // Set the type value after ensuring the dropdown is updated
+            SwingUtilities.invokeLater(() -> {
+                CmbTipeBarang.setSelectedItem(type);
+            });
+
             TxtHarga.setText(price); // Set only numeric value
             SpinnerStok.setValue(stock);
 
