@@ -49,7 +49,13 @@ public class InventoryAppModel extends javax.swing.JFrame {
         DefaultTableModel model = new DefaultTableModel(
                 new Object[]{"No.", "Nama Barang", "Kategori", "Status", "Harga", "Jumlah Stok"},
                 0
-        );
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // Semua sel tidak dapat diedit
+                return false;
+            }
+        };
         OutputTable.setModel(model);
 
         BtnExport.setToolTipText("Ekspor data ke file CSV untuk disimpan.");
@@ -486,7 +492,15 @@ public class InventoryAppModel extends javax.swing.JFrame {
             new String [] {
                 "No.", "Nama Barang", "Kategori", "Status", "Harga", "Jumlah Stok"
             }
-        ));
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
         jScrollPane.setViewportView(OutputTable);
 
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
@@ -551,9 +565,11 @@ public class InventoryAppModel extends javax.swing.JFrame {
             // Create item name
             String namaBarang = merk + " " + tipe;
 
-            // Add data to the table
+            // Nomor baris berdasarkan total data di originalTableData
+            int rowNo = originalTableData.size() + 1;
+
+            // Tambahkan data ke tabel saat ini
             DefaultTableModel model = (DefaultTableModel) OutputTable.getModel();
-            int rowNo = model.getRowCount() + 1; // Auto-increment row number
             model.addRow(new Object[]{
                 rowNo,
                 namaBarang,
@@ -563,7 +579,7 @@ public class InventoryAppModel extends javax.swing.JFrame {
                 jumlahStok
             });
 
-            // Add data to originalTableData for Reset/Search functionality
+            // Tambahkan data ke originalTableData
             originalTableData.add(new Object[]{
                 rowNo,
                 namaBarang,
@@ -573,7 +589,7 @@ public class InventoryAppModel extends javax.swing.JFrame {
                 jumlahStok
             });
 
-            // Clear inputs after successful addition
+            // Clear inputs setelah data berhasil ditambahkan
             CmbKategori.setSelectedIndex(0);
             CmbMerk.setSelectedIndex(0);
             CmbTipeBarang.setSelectedIndex(0);
@@ -584,7 +600,7 @@ public class InventoryAppModel extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Data berhasil ditambahkan!",
                     "Informasi", JOptionPane.INFORMATION_MESSAGE);
 
-            // Check for low stocks
+            // Check untuk stok rendah
             if (jumlahStok < 5) {
                 JOptionPane.showMessageDialog(this, "Stok rendah untuk " + namaBarang + "! Tambahkan segera!", "Peringatan", JOptionPane.WARNING_MESSAGE);
             }
@@ -597,17 +613,25 @@ public class InventoryAppModel extends javax.swing.JFrame {
 
     private void BtnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnResetActionPerformed
         // TODO add your handling code here:
+        // Buat model tabel baru dengan isCellEditable selalu false
         DefaultTableModel model = new DefaultTableModel(
                 new Object[]{"No.", "Nama Barang", "Kategori", "Status", "Harga", "Jumlah Stok"},
                 0
-        );
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false; // Selalu tidak dapat diedit
+            }
+        };
 
-        for (Object[] rowData : originalTableData) { // Restore original data
+        // Tambahkan data dari originalTableData dengan penomoran ulang
+        for (int i = 0; i < originalTableData.size(); i++) {
+            Object[] rowData = originalTableData.get(i);
+            rowData[0] = i + 1; // Perbarui nomor baris berdasarkan urutan
             model.addRow(rowData);
         }
 
-        OutputTable.setModel(model);
-        TxtHarga.setText(""); // Clear the search field
+        OutputTable.setModel(model); // Reset tabel ke kondisi originalTableData
     }//GEN-LAST:event_BtnResetActionPerformed
 
     private void BtnPerbaruiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnPerbaruiActionPerformed
@@ -628,13 +652,33 @@ public class InventoryAppModel extends javax.swing.JFrame {
             int harga = Integer.parseInt(price);
             String formattedHarga = formatHarga(harga);
             int stock = (int) SpinnerStok.getValue();
-            String itemName = brand + " - " + type;
+            String itemName = brand + " " + type;
 
+            // Update tabel
             OutputTable.setValueAt(itemName, selectedRow, 1);
             OutputTable.setValueAt(category, selectedRow, 2);
             OutputTable.setValueAt(status, selectedRow, 3);
             OutputTable.setValueAt(formattedHarga, selectedRow, 4);
             OutputTable.setValueAt(stock, selectedRow, 5);
+
+            // Update originalTableData untuk mempertahankan perubahan
+            Object[] updatedRow = new Object[]{
+                selectedRow + 1, // Nomor baris (1-based indexing)
+                itemName,
+                category,
+                status,
+                formattedHarga,
+                stock
+            };
+            originalTableData.set(selectedRow, updatedRow);
+
+            // Tampilkan peringatan jika stok rendah
+            if (stock < 5) {
+                JOptionPane.showMessageDialog(this,
+                        "Stok rendah untuk " + itemName + "! Tambahkan segera!",
+                        "Peringatan",
+                        JOptionPane.WARNING_MESSAGE);
+            }
 
             JOptionPane.showMessageDialog(this, "Data berhasil diperbarui!", "Sukses", JOptionPane.INFORMATION_MESSAGE);
         } else {
@@ -662,7 +706,16 @@ public class InventoryAppModel extends javax.swing.JFrame {
                 DefaultTableModel model = (DefaultTableModel) OutputTable.getModel();
                 model.removeRow(selectedRow);
 
-                renumberTableRows(); // Renumber rows after deletion
+                // Hapus data dari originalTableData
+                originalTableData.remove(selectedRow);
+
+                // Perbarui nomor baris di originalTableData
+                for (int i = 0; i < originalTableData.size(); i++) {
+                    originalTableData.get(i)[0] = i + 1; // Update nomor baris
+                }
+
+                // Perbarui tabel
+                BtnResetActionPerformed(null);
 
                 JOptionPane.showMessageDialog(
                         this,
