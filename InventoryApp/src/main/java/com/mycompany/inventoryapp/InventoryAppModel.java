@@ -11,6 +11,10 @@ import javax.swing.table.DefaultTableModel;
 import java.util.HashMap;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.table.TableModel;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -36,7 +40,7 @@ public class InventoryAppModel extends javax.swing.JFrame {
     public InventoryAppModel() {
         initComponents();
 
-        Color bg = new Color(211, 241, 223);
+        Color bg = new Color(255, 255, 255);
         getContentPane().setBackground(bg);
 
         SpinnerStok.setModel(new javax.swing.SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
@@ -59,7 +63,6 @@ public class InventoryAppModel extends javax.swing.JFrame {
         OutputTable.setModel(model);
 
         BtnExport.setToolTipText("Ekspor data ke file CSV untuk disimpan.");
-        setupExportButton(BtnExport, OutputTable); // Link button to export functionality
     }
 
     private void populateBrandAndTypeData() {
@@ -79,12 +82,12 @@ public class InventoryAppModel extends javax.swing.JFrame {
         // Smartphone types
         typeMap.put("Samsung", new String[]{"Galaxy S23 Ultra", "Galaxy S22", "Galaxy Z Fold 4", "Galaxy A73", "Galaxy M14", "Galaxy S10 Ultra"});
         typeMap.put("Apple", new String[]{"iPhone 13 Mini", "iPhone 14 Pro", "iPhone 14 Pro Max", "iPhone SE 2022", "iPhone XR", "iPhone 12"});
-        typeMap.put("Xiaomi", new String[]{"Redmi Note 12", "POCO F5", "Xiaomi 13", "Xiaomi 13 Ultra", "Mi Mix Fold 2", "Redmi K60"});
-        typeMap.put("Realme", new String[]{"Narzo 60", "Realme GT Neo 5", "Realme C55", "Realme 11 Pro", "Realme 10", "Narzo 50"});
+        typeMap.put("Xiaomi", new String[]{"Redmi Note 12", "POCO F5", "13", "13 Ultra", "Mi Mix Fold 2", "Redmi K60"});
+        typeMap.put("Realme", new String[]{"Narzo 60", "GT Neo 5", "C55", "11 Pro", "10 Regular", "Narzo 50"});
         typeMap.put("Oppo", new String[]{"Find X5 Pro", "Reno 8", "Reno 9 Pro", "Oppo A96", "Find N2 Flip", "A78"});
         typeMap.put("Vivo", new String[]{"X80 Pro", "Vivo T2 5G", "Y100", "Y16", "V27 Pro", "V25"});
-        typeMap.put("Google Pixel", new String[]{"Pixel 7 Pro", "Pixel 6a", "Pixel Fold", "Pixel 7a", "Pixel 5", "Pixel 4 XL"});
-        typeMap.put("OnePlus", new String[]{"OnePlus 11", "OnePlus 10 Pro", "Nord 2T", "Nord CE 3 Lite", "OnePlus Ace", "OnePlus 9R"});
+        typeMap.put("Google Pixel", new String[]{"7 Pro", "6a", "Fold", "7a", "5", "4 XL"});
+        typeMap.put("OnePlus", new String[]{"11", "10 Pro", "2T", "CE 3 Lite", "Ace", "9R"});
     }
 
     private void populateInitialCategory() {
@@ -221,8 +224,91 @@ public class InventoryAppModel extends javax.swing.JFrame {
         }
     }
 
-    private void setupExportButton(JButton btnExport, JTable outputTable) {
-        btnExport.addActionListener(e -> exportTableDataToCSV(outputTable));
+    private void insertDataToDatabase(String namaBarang, String kategori, String status, int harga, int jumlahStok) {
+        try (Connection conn = DBConnection.getConnection()) {
+            String query = "INSERT INTO inventory (nama_barang, kategori, status_barang, harga, jumlah_stok) VALUES (?, ?, ?, ?, ?)";
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setString(1, namaBarang);
+                stmt.setString(2, kategori);
+                stmt.setString(3, status);
+                stmt.setInt(4, harga);
+                stmt.setInt(5, jumlahStok);
+                stmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error inserting data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void loadDataFromDatabase() {
+        DefaultTableModel model = (DefaultTableModel) OutputTable.getModel();
+        model.setRowCount(0); // Clear existing rows
+        originalTableData.clear(); // Clear local cache
+
+        try (Connection conn = DBConnection.getConnection()) {
+            String query = "SELECT * FROM inventory";
+            try (PreparedStatement stmt = conn.prepareStatement(query); ResultSet rs = stmt.executeQuery()) {
+
+                while (rs.next()) {
+                    Object[] row = {
+                        model.getRowCount() + 1, // Row number
+                        rs.getString("nama_barang"),
+                        rs.getString("kategori"),
+                        rs.getString("status_barang"),
+                        formatHarga(rs.getInt("harga")),
+                        rs.getInt("jumlah_stok")
+                    };
+                    model.addRow(row);
+                    originalTableData.add(row);
+                }
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error loading data: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void updateDatabaseRecord(int id, String namaBarang, String kategori, String status, int harga, int jumlahStok) {
+        try (Connection conn = DBConnection.getConnection()) {
+            String query = "UPDATE inventory SET nama_barang = ?, kategori = ?, status_barang = ?, harga = ?, jumlah_stok = ? WHERE id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setString(1, namaBarang);
+                stmt.setString(2, kategori);
+                stmt.setString(3, status);
+                stmt.setInt(4, harga);
+                stmt.setInt(5, jumlahStok);
+                stmt.setInt(6, id);
+                stmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error updating record: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void deleteDatabaseRecord(int id) {
+        try (Connection conn = DBConnection.getConnection()) {
+            String query = "DELETE FROM inventory WHERE id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setInt(1, id);
+                stmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error deleting record: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void openFrame(JFrame frame) {
+        frame.setVisible(true);
+        frame.setLocationRelativeTo(null);
+    }
+
+    private boolean showConfirmationDialog(String message, String title) {
+        int confirm = JOptionPane.showConfirmDialog(this, message, title, JOptionPane.YES_NO_OPTION);
+        return confirm == JOptionPane.YES_OPTION;
+    }
+
+    private void transitionTo(JFrame targetFrame) {
+        dispose(); // or this.setVisible(false);
+        openFrame(targetFrame);
     }
 
     /**
@@ -261,13 +347,22 @@ public class InventoryAppModel extends javax.swing.JFrame {
         jPanel4 = new javax.swing.JPanel();
         jScrollPane = new javax.swing.JScrollPane();
         OutputTable = new javax.swing.JTable();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        jMenu1 = new javax.swing.JMenu();
+        menuKembali = new javax.swing.JMenuItem();
+        jMenu2 = new javax.swing.JMenu();
+        menuTentang = new javax.swing.JMenuItem();
+        menuProfil = new javax.swing.JMenuItem();
+        menuLogout = new javax.swing.JMenuItem();
+        menuKeluar = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("InventoryMenu");
 
-        jPanel1.setBackground(new java.awt.Color(211, 241, 223));
+        jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         TitleLabel.setFont(new java.awt.Font("Poppins", 1, 24)); // NOI18N
-        TitleLabel.setForeground(new java.awt.Color(82, 91, 68));
+        TitleLabel.setForeground(new java.awt.Color(51, 0, 102));
         TitleLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         TitleLabel.setText("ELECTRONIC STORE INVENTORY APP");
 
@@ -283,15 +378,15 @@ public class InventoryAppModel extends javax.swing.JFrame {
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(20, 20, 20)
+                .addGap(19, 19, 19)
                 .addComponent(TitleLabel)
-                .addContainerGap(19, Short.MAX_VALUE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
 
-        jPanel2.setBackground(new java.awt.Color(211, 241, 223));
+        jPanel2.setBackground(new java.awt.Color(255, 255, 255));
 
         KategoriBarang.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
-        KategoriBarang.setForeground(new java.awt.Color(82, 91, 68));
+        KategoriBarang.setForeground(new java.awt.Color(51, 0, 102));
         KategoriBarang.setText("Kategori Barang:");
 
         CmbKategori.addActionListener(new java.awt.event.ActionListener() {
@@ -301,7 +396,7 @@ public class InventoryAppModel extends javax.swing.JFrame {
         });
 
         MerkBarang.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
-        MerkBarang.setForeground(new java.awt.Color(82, 91, 68));
+        MerkBarang.setForeground(new java.awt.Color(51, 0, 102));
         MerkBarang.setText("Merk Barang:");
 
         CmbMerk.addActionListener(new java.awt.event.ActionListener() {
@@ -311,7 +406,7 @@ public class InventoryAppModel extends javax.swing.JFrame {
         });
 
         TipeBarang.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
-        TipeBarang.setForeground(new java.awt.Color(82, 91, 68));
+        TipeBarang.setForeground(new java.awt.Color(51, 0, 102));
         TipeBarang.setText("Tipe Barang:");
 
         CmbTipeBarang.addActionListener(new java.awt.event.ActionListener() {
@@ -321,11 +416,11 @@ public class InventoryAppModel extends javax.swing.JFrame {
         });
 
         Harga.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
-        Harga.setForeground(new java.awt.Color(82, 91, 68));
+        Harga.setForeground(new java.awt.Color(51, 0, 102));
         Harga.setText("Harga:");
 
         StatusBarang.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
-        StatusBarang.setForeground(new java.awt.Color(82, 91, 68));
+        StatusBarang.setForeground(new java.awt.Color(51, 0, 102));
         StatusBarang.setText("Status Barang:");
 
         groupButtonStatus.add(RadioBtnBaru);
@@ -335,7 +430,7 @@ public class InventoryAppModel extends javax.swing.JFrame {
         RadioBtnBekas.setText("Bekas");
 
         JumlahStok.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
-        JumlahStok.setForeground(new java.awt.Color(82, 91, 68));
+        JumlahStok.setForeground(new java.awt.Color(51, 0, 102));
         JumlahStok.setText("Jumlah Stok:");
 
         SpinnerStok.setToolTipText("");
@@ -406,7 +501,7 @@ public class InventoryAppModel extends javax.swing.JFrame {
                 .addContainerGap(31, Short.MAX_VALUE))
         );
 
-        jPanel3.setBackground(new java.awt.Color(211, 241, 223));
+        jPanel3.setBackground(new java.awt.Color(255, 255, 255));
 
         BtnTambah.setText("Tambah");
         BtnTambah.addActionListener(new java.awt.event.ActionListener() {
@@ -483,7 +578,7 @@ public class InventoryAppModel extends javax.swing.JFrame {
                 .addContainerGap(23, Short.MAX_VALUE))
         );
 
-        jPanel4.setBackground(new java.awt.Color(211, 241, 223));
+        jPanel4.setBackground(new java.awt.Color(51, 51, 51));
 
         OutputTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -516,6 +611,61 @@ public class InventoryAppModel extends javax.swing.JFrame {
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
+        jMenu1.setText("Pilih Menu");
+
+        menuKembali.setIcon(new javax.swing.ImageIcon("C:\\Users\\acer\\Documents\\NetBeansProjects\\TableGUI2\\InventoryApp\\src\\main\\java\\assets\\Back.png")); // NOI18N
+        menuKembali.setText("Kembali");
+        menuKembali.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuKembaliActionPerformed(evt);
+            }
+        });
+        jMenu1.add(menuKembali);
+
+        jMenuBar1.add(jMenu1);
+
+        jMenu2.setText("Pengaturan");
+
+        menuTentang.setIcon(new javax.swing.ImageIcon("C:\\Users\\acer\\Documents\\NetBeansProjects\\TableGUI2\\InventoryApp\\src\\main\\java\\assets\\About.png")); // NOI18N
+        menuTentang.setText("Tentang");
+        menuTentang.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuTentangActionPerformed(evt);
+            }
+        });
+        jMenu2.add(menuTentang);
+
+        menuProfil.setIcon(new javax.swing.ImageIcon("C:\\Users\\acer\\Documents\\NetBeansProjects\\TableGUI2\\InventoryApp\\src\\main\\java\\assets\\Profile.png")); // NOI18N
+        menuProfil.setText("Profil");
+        menuProfil.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuProfilActionPerformed(evt);
+            }
+        });
+        jMenu2.add(menuProfil);
+
+        menuLogout.setIcon(new javax.swing.ImageIcon("C:\\Users\\acer\\Documents\\NetBeansProjects\\TableGUI2\\InventoryApp\\src\\main\\java\\assets\\Logout.png")); // NOI18N
+        menuLogout.setText("Logout");
+        menuLogout.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuLogoutActionPerformed(evt);
+            }
+        });
+        jMenu2.add(menuLogout);
+
+        menuKeluar.setIcon(new javax.swing.ImageIcon("C:\\Users\\acer\\Documents\\NetBeansProjects\\TableGUI2\\InventoryApp\\src\\main\\java\\assets\\Exit.png")); // NOI18N
+        menuKeluar.setText("Keluar");
+        menuKeluar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuKeluarActionPerformed(evt);
+            }
+        });
+        jMenu2.add(menuKeluar);
+
+        jMenuBar1.add(jMenu2);
+
+        setJMenuBar(jMenuBar1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -538,8 +688,8 @@ public class InventoryAppModel extends javax.swing.JFrame {
         );
 
         pack();
+        setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
-
 
     private void BtnTambahActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnTambahActionPerformed
         // TODO add your handling code here:
@@ -736,6 +886,7 @@ public class InventoryAppModel extends javax.swing.JFrame {
 
     private void BtnExportActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnExportActionPerformed
         // TODO add your handling code here:
+        exportTableDataToCSV(OutputTable);
     }//GEN-LAST:event_BtnExportActionPerformed
 
     private void CmbMerkActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_CmbMerkActionPerformed
@@ -790,6 +941,36 @@ public class InventoryAppModel extends javax.swing.JFrame {
                     JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_BtnCariActionPerformed
+
+    private void menuTentangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuTentangActionPerformed
+        // TODO add your handling code here:
+        openFrame(new Tentang());
+    }//GEN-LAST:event_menuTentangActionPerformed
+
+    private void menuKeluarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuKeluarActionPerformed
+        // TODO add your handling code here:
+        if (showConfirmationDialog("Apakah anda yakin untuk keluar?", "Konfirmasi Keluar")) {
+            dispose();
+            JOptionPane.showMessageDialog(this, "Anda telah keluar dari program. Terimakasih.", "Info", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }//GEN-LAST:event_menuKeluarActionPerformed
+
+    private void menuProfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuProfilActionPerformed
+        // TODO add your handling code here:
+        openFrame(new Profil());
+    }//GEN-LAST:event_menuProfilActionPerformed
+
+    private void menuLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLogoutActionPerformed
+        // TODO add your handling code here:
+        if (showConfirmationDialog("Apakah anda yakin untuk logout?", "Konfirmasi Logout")) {
+            transitionTo(new Login());
+        }
+    }//GEN-LAST:event_menuLogoutActionPerformed
+
+    private void menuKembaliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuKembaliActionPerformed
+        // TODO add your handling code here:
+        transitionTo(new Homepage());
+    }//GEN-LAST:event_menuKembaliActionPerformed
 
     /**
      * @param args the command line arguments
@@ -849,11 +1030,19 @@ public class InventoryAppModel extends javax.swing.JFrame {
     private javax.swing.JLabel TitleLabel;
     private javax.swing.JTextField TxtHarga;
     private javax.swing.ButtonGroup groupButtonStatus;
+    private javax.swing.JMenu jMenu1;
+    private javax.swing.JMenu jMenu2;
+    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
     private javax.swing.JPanel jPanel4;
     private javax.swing.JScrollPane jScrollPane;
+    private javax.swing.JMenuItem menuKeluar;
+    private javax.swing.JMenuItem menuKembali;
+    private javax.swing.JMenuItem menuLogout;
+    private javax.swing.JMenuItem menuProfil;
+    private javax.swing.JMenuItem menuTentang;
     // End of variables declaration//GEN-END:variables
     private boolean validateInputs() {
         if (CmbKategori.getSelectedIndex() == 0) {
