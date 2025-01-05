@@ -167,7 +167,6 @@ public class Profil extends javax.swing.JFrame {
         jLabel1.setText("Detail Profil");
 
         jLabel6.setIcon(new javax.swing.ImageIcon("C:\\Users\\acer\\Documents\\NetBeansProjects\\TableGUI2\\InventoryApp\\src\\main\\java\\assets\\welcome\\usersettings.png")); // NOI18N
-        jLabel6.setText("jLabel6");
 
         javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
         jPanel3.setLayout(jPanel3Layout);
