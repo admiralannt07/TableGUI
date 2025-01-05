@@ -288,7 +288,7 @@ public class Homepage extends javax.swing.JFrame {
 
     private void btnStartInventoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartInventoryActionPerformed
         // TODO add your handling code here:
-        transitionTo(new InventoryAppModel());
+        openInventaris();
     }//GEN-LAST:event_btnStartInventoryActionPerformed
 
     /**
