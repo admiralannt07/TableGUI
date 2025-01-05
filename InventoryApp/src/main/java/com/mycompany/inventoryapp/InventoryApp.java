@@ -1,7 +1,6 @@
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  */
-
 package com.mycompany.inventoryapp;
 
 /**
@@ -13,7 +12,7 @@ public class InventoryApp {
     public static void main(String[] args) {
         Login start = new Login();
         start.setVisible(true);
-        
+
         start.pack();
         start.setLocationRelativeTo(null);
         start.setDefaultCloseOperation(Login.EXIT_ON_CLOSE);

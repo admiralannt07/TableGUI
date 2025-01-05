@@ -28,7 +28,8 @@ public class InventoryAppModel extends javax.swing.JFrame {
     private HashMap<String, String[]> brandMap = new HashMap<>();
     private HashMap<String, String[]> typeMap = new HashMap<>();
     private ArrayList<Object[]> originalTableData = new ArrayList<>();
-
+    private int userId;
+    
     public String formatHarga(int harga) {
         NumberFormat formatter = NumberFormat.getCurrencyInstance(new Locale("id", "ID"));
         return formatter.format(harga).replace("Rp", "Rp.").replace(",00", "");
@@ -39,7 +40,38 @@ public class InventoryAppModel extends javax.swing.JFrame {
      */
     public InventoryAppModel() {
         initComponents();
+        SwingUtilities.invokeLater(() -> loadDataFromDatabase());
 
+        Color bg = new Color(255, 255, 255);
+        getContentPane().setBackground(bg);
+
+        SpinnerStok.setModel(new javax.swing.SpinnerNumberModel(0, 0, Integer.MAX_VALUE, 1));
+
+        populateBrandAndTypeData(); // Populate the brand and type data
+        populateInitialCategory(); // Populate CmbKategori with placeholders
+        addComboBoxListeners();
+        addTableSelectionListener();// Add listeners for dynamic updates
+
+        DefaultTableModel model = new DefaultTableModel(
+                new Object[]{"No.", "Nama Barang", "Kategori", "Status", "Harga", "Jumlah Stok"},
+                0
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                // Semua sel tidak dapat diedit
+                return false;
+            }
+        };
+        OutputTable.setModel(model);
+
+        BtnExport.setToolTipText("Ekspor data ke file CSV untuk disimpan.");
+    }
+    
+    public InventoryAppModel(int userId) {
+        initComponents();
+        this.userId = userId;
+        SwingUtilities.invokeLater(() -> loadDataFromDatabase());
+        
         Color bg = new Color(255, 255, 255);
         getContentPane().setBackground(bg);
 
@@ -260,6 +292,10 @@ public class InventoryAppModel extends javax.swing.JFrame {
                     };
                     model.addRow(row);
                     originalTableData.add(row);
+
+                    System.out.println("Loading data from database...");
+                    // Existing implementation
+                    System.out.println("Data loaded successfully!");
                 }
             }
         } catch (SQLException e) {
@@ -277,7 +313,11 @@ public class InventoryAppModel extends javax.swing.JFrame {
                 stmt.setInt(4, harga);
                 stmt.setInt(5, jumlahStok);
                 stmt.setInt(6, id);
-                stmt.executeUpdate();
+                int rowsUpdated = stmt.executeUpdate();
+
+                if (rowsUpdated == 0) {
+                    JOptionPane.showMessageDialog(this, "No rows were updated. ID may not exist.", "Update Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error updating record: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
@@ -289,7 +329,11 @@ public class InventoryAppModel extends javax.swing.JFrame {
             String query = "DELETE FROM inventory WHERE id = ?";
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
                 stmt.setInt(1, id);
-                stmt.executeUpdate();
+                int rowsDeleted = stmt.executeUpdate();
+
+                if (rowsDeleted == 0) {
+                    JOptionPane.showMessageDialog(this, "No rows were deleted. ID may not exist.", "Delete Error", JOptionPane.ERROR_MESSAGE);
+                }
             }
         } catch (SQLException e) {
             JOptionPane.showMessageDialog(this, "Error deleting record: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
@@ -309,6 +353,13 @@ public class InventoryAppModel extends javax.swing.JFrame {
     private void transitionTo(JFrame targetFrame) {
         dispose(); // or this.setVisible(false);
         openFrame(targetFrame);
+    }
+
+    private void transitionToHome() {
+        Homepage homepage = new Homepage(userId);
+        homepage.setVisible(true);
+        homepage.setLocationRelativeTo(null);
+        this.dispose();
     }
 
     /**
@@ -357,12 +408,12 @@ public class InventoryAppModel extends javax.swing.JFrame {
         menuKeluar = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("InventoryMenu");
+        setTitle("Inventory");
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
 
         TitleLabel.setFont(new java.awt.Font("Poppins", 1, 24)); // NOI18N
-        TitleLabel.setForeground(new java.awt.Color(51, 0, 102));
+        TitleLabel.setForeground(new java.awt.Color(0, 51, 153));
         TitleLabel.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
         TitleLabel.setText("ELECTRONIC STORE INVENTORY APP");
 
@@ -385,54 +436,64 @@ public class InventoryAppModel extends javax.swing.JFrame {
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
 
-        KategoriBarang.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
+        KategoriBarang.setFont(new java.awt.Font("Poppins", 0, 16)); // NOI18N
         KategoriBarang.setForeground(new java.awt.Color(51, 0, 102));
         KategoriBarang.setText("Kategori Barang:");
 
+        CmbKategori.setFont(new java.awt.Font("Helvetica", 0, 14)); // NOI18N
         CmbKategori.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 CmbKategoriActionPerformed(evt);
             }
         });
 
-        MerkBarang.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
+        MerkBarang.setFont(new java.awt.Font("Poppins", 0, 16)); // NOI18N
         MerkBarang.setForeground(new java.awt.Color(51, 0, 102));
         MerkBarang.setText("Merk Barang:");
 
+        CmbMerk.setFont(new java.awt.Font("Helvetica", 0, 14)); // NOI18N
         CmbMerk.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 CmbMerkActionPerformed(evt);
             }
         });
 
-        TipeBarang.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
+        TipeBarang.setFont(new java.awt.Font("Poppins", 0, 16)); // NOI18N
         TipeBarang.setForeground(new java.awt.Color(51, 0, 102));
         TipeBarang.setText("Tipe Barang:");
 
+        CmbTipeBarang.setFont(new java.awt.Font("Helvetica", 0, 14)); // NOI18N
         CmbTipeBarang.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 CmbTipeBarangActionPerformed(evt);
             }
         });
 
-        Harga.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
+        Harga.setFont(new java.awt.Font("Poppins", 0, 16)); // NOI18N
         Harga.setForeground(new java.awt.Color(51, 0, 102));
         Harga.setText("Harga:");
 
-        StatusBarang.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
+        TxtHarga.setFont(new java.awt.Font("Helvetica", 0, 14)); // NOI18N
+
+        StatusBarang.setFont(new java.awt.Font("Poppins", 0, 16)); // NOI18N
         StatusBarang.setForeground(new java.awt.Color(51, 0, 102));
         StatusBarang.setText("Status Barang:");
 
+        RadioBtnBaru.setBackground(new java.awt.Color(255, 255, 255));
         groupButtonStatus.add(RadioBtnBaru);
+        RadioBtnBaru.setFont(new java.awt.Font("Helvetica", 0, 14)); // NOI18N
         RadioBtnBaru.setText("Baru");
 
+        RadioBtnBekas.setBackground(new java.awt.Color(255, 255, 255));
         groupButtonStatus.add(RadioBtnBekas);
+        RadioBtnBekas.setFont(new java.awt.Font("Helvetica", 0, 14)); // NOI18N
         RadioBtnBekas.setText("Bekas");
 
-        JumlahStok.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
+        JumlahStok.setFont(new java.awt.Font("Poppins", 0, 16)); // NOI18N
         JumlahStok.setForeground(new java.awt.Color(51, 0, 102));
         JumlahStok.setText("Jumlah Stok:");
 
+        SpinnerStok.setFont(new java.awt.Font("Helvetica", 0, 14)); // NOI18N
         SpinnerStok.setToolTipText("");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
@@ -442,22 +503,22 @@ public class InventoryAppModel extends javax.swing.JFrame {
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(103, 103, 103)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(Harga, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(Harga, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                         .addGroup(jPanel2Layout.createSequentialGroup()
-                            .addComponent(TipeBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(TipeBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(27, 27, 27)
                             .addComponent(CmbTipeBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel2Layout.createSequentialGroup()
-                                .addComponent(MerkBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(MerkBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(27, 27, 27)
                                 .addComponent(CmbMerk, javax.swing.GroupLayout.PREFERRED_SIZE, 149, javax.swing.GroupLayout.PREFERRED_SIZE))
                             .addGroup(jPanel2Layout.createSequentialGroup()
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(JumlahStok, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(KategoriBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(StatusBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 119, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                    .addComponent(JumlahStok, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(KategoriBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(StatusBarang, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(27, 27, 27)
                                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addGroup(jPanel2Layout.createSequentialGroup()
@@ -503,6 +564,9 @@ public class InventoryAppModel extends javax.swing.JFrame {
 
         jPanel3.setBackground(new java.awt.Color(255, 255, 255));
 
+        BtnTambah.setBackground(new java.awt.Color(0, 51, 153));
+        BtnTambah.setFont(new java.awt.Font("Helvetica", 0, 14)); // NOI18N
+        BtnTambah.setForeground(new java.awt.Color(255, 255, 255));
         BtnTambah.setText("Tambah");
         BtnTambah.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -510,6 +574,9 @@ public class InventoryAppModel extends javax.swing.JFrame {
             }
         });
 
+        BtnPerbarui.setBackground(new java.awt.Color(0, 51, 153));
+        BtnPerbarui.setFont(new java.awt.Font("Helvetica", 0, 14)); // NOI18N
+        BtnPerbarui.setForeground(new java.awt.Color(255, 255, 255));
         BtnPerbarui.setText("Perbarui");
         BtnPerbarui.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -517,6 +584,9 @@ public class InventoryAppModel extends javax.swing.JFrame {
             }
         });
 
+        BtnHapus.setBackground(new java.awt.Color(0, 51, 153));
+        BtnHapus.setFont(new java.awt.Font("Helvetica", 0, 14)); // NOI18N
+        BtnHapus.setForeground(new java.awt.Color(255, 255, 255));
         BtnHapus.setText("Hapus");
         BtnHapus.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -524,6 +594,9 @@ public class InventoryAppModel extends javax.swing.JFrame {
             }
         });
 
+        BtnExport.setBackground(new java.awt.Color(0, 51, 153));
+        BtnExport.setFont(new java.awt.Font("Helvetica", 0, 14)); // NOI18N
+        BtnExport.setForeground(new java.awt.Color(255, 255, 255));
         BtnExport.setText("Export");
         BtnExport.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -531,6 +604,9 @@ public class InventoryAppModel extends javax.swing.JFrame {
             }
         });
 
+        BtnReset.setBackground(new java.awt.Color(0, 51, 153));
+        BtnReset.setFont(new java.awt.Font("Helvetica", 0, 14)); // NOI18N
+        BtnReset.setForeground(new java.awt.Color(255, 255, 255));
         BtnReset.setText("Reset");
         BtnReset.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -538,6 +614,9 @@ public class InventoryAppModel extends javax.swing.JFrame {
             }
         });
 
+        BtnCari.setBackground(new java.awt.Color(0, 51, 153));
+        BtnCari.setFont(new java.awt.Font("Helvetica", 0, 14)); // NOI18N
+        BtnCari.setForeground(new java.awt.Color(255, 255, 255));
         BtnCari.setText("Cari");
         BtnCari.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -556,7 +635,7 @@ public class InventoryAppModel extends javax.swing.JFrame {
                 .addComponent(BtnPerbarui)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(BtnCari)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(BtnHapus)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(BtnReset)
@@ -580,6 +659,9 @@ public class InventoryAppModel extends javax.swing.JFrame {
 
         jPanel4.setBackground(new java.awt.Color(51, 51, 51));
 
+        OutputTable.setBackground(new java.awt.Color(0, 51, 153));
+        OutputTable.setFont(new java.awt.Font("Helvetica", 0, 12)); // NOI18N
+        OutputTable.setForeground(new java.awt.Color(255, 255, 255));
         OutputTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -715,6 +797,9 @@ public class InventoryAppModel extends javax.swing.JFrame {
             // Create item name
             String namaBarang = merk + " " + tipe;
 
+            // Inserting into Database
+            insertDataToDatabase(namaBarang, kategori, statusBarang, harga, jumlahStok);
+
             // Nomor baris berdasarkan total data di originalTableData
             int rowNo = originalTableData.size() + 1;
 
@@ -762,26 +847,12 @@ public class InventoryAppModel extends javax.swing.JFrame {
     }//GEN-LAST:event_BtnTambahActionPerformed
 
     private void BtnResetActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnResetActionPerformed
-        // TODO add your handling code here:
-        // Buat model tabel baru dengan isCellEditable selalu false
-        DefaultTableModel model = new DefaultTableModel(
-                new Object[]{"No.", "Nama Barang", "Kategori", "Status", "Harga", "Jumlah Stok"},
-                0
-        ) {
-            @Override
-            public boolean isCellEditable(int row, int column) {
-                return false; // Selalu tidak dapat diedit
-            }
-        };
+        // Reload data from the database into the table
+        loadDataFromDatabase();
 
-        // Tambahkan data dari originalTableData dengan penomoran ulang
-        for (int i = 0; i < originalTableData.size(); i++) {
-            Object[] rowData = originalTableData.get(i);
-            rowData[0] = i + 1; // Perbarui nomor baris berdasarkan urutan
-            model.addRow(rowData);
-        }
-
-        OutputTable.setModel(model); // Reset tabel ke kondisi originalTableData
+        // Optional: Display a message to the user (if needed)
+        JOptionPane.showMessageDialog(this, "Data telah di-reset ke kondisi terbaru dari database.", "Informasi",
+                JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_BtnResetActionPerformed
 
     private void BtnPerbaruiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BtnPerbaruiActionPerformed
@@ -803,6 +874,15 @@ public class InventoryAppModel extends javax.swing.JFrame {
             String formattedHarga = formatHarga(harga);
             int stock = (int) SpinnerStok.getValue();
             String itemName = brand + " " + type;
+
+            // Get ID from table
+            int id = Integer.parseInt(originalTableData.get(selectedRow)[0].toString());
+
+            // Update database record
+            updateDatabaseRecord(id, itemName, category, status, harga, stock);
+
+            // Refresh table
+            loadDataFromDatabase();
 
             // Update tabel
             OutputTable.setValueAt(itemName, selectedRow, 1);
@@ -853,6 +933,15 @@ public class InventoryAppModel extends javax.swing.JFrame {
             );
 
             if (confirm == JOptionPane.YES_OPTION) {
+                // Get ID from the table
+                int id = Integer.parseInt(originalTableData.get(selectedRow)[0].toString());
+
+                // Delete from database
+                deleteDatabaseRecord(id);
+
+                // Refresh the table from the database
+                loadDataFromDatabase();
+
                 DefaultTableModel model = (DefaultTableModel) OutputTable.getModel();
                 model.removeRow(selectedRow);
 
@@ -969,7 +1058,7 @@ public class InventoryAppModel extends javax.swing.JFrame {
 
     private void menuKembaliActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuKembaliActionPerformed
         // TODO add your handling code here:
-        transitionTo(new Homepage());
+        transitionToHome();
     }//GEN-LAST:event_menuKembaliActionPerformed
 
     /**

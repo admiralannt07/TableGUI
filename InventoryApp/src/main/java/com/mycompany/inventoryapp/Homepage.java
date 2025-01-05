@@ -4,6 +4,11 @@
  */
 package com.mycompany.inventoryapp;
 
+import java.awt.Color;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
@@ -16,10 +21,19 @@ public class Homepage extends javax.swing.JFrame {
     /**
      * Creates new form Homepage
      */
-    
+    private int userId;
 
     public Homepage() {
         initComponents();
+        Color bg = new Color(255, 255, 255);
+        getContentPane().setBackground(bg);
+        loadUserDetails(userId);
+    }
+
+    public Homepage(int userId) {
+        initComponents();
+        this.userId = userId; // Store userId for later use if needed
+        loadUserDetails(userId);
     }
 
     public void setWelcomeContainerVisible(boolean visible) {
@@ -29,10 +43,44 @@ public class Homepage extends javax.swing.JFrame {
     public void setMenuBarVisible(boolean visible) {
         jMenuBar1.setVisible(visible);
     }
-    
+
     private void openFrame(JFrame frame) {
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
+    }
+
+    private void openProfil() {
+        Profil profil = new Profil(userId); // Pass the userId
+        profil.setVisible(true);
+        profil.setLocationRelativeTo(null);
+        
+        this.setVisible(false);
+    }
+    
+    private void openInventaris() {
+        InventoryAppModel inventory = new InventoryAppModel(userId); // Pass the userId
+        inventory.setVisible(true);
+        inventory.setLocationRelativeTo(null);
+        
+        this.setVisible(false);
+    }
+    
+    private void loadUserDetails(int userId) {
+        try (Connection conn = DBConnection.getConnection()) {
+            String query = "SELECT username FROM users WHERE id = ?";
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.setInt(1, userId);
+                try (ResultSet rs = stmt.executeQuery()) {
+                    if (rs.next()) {
+                        OutputUsername.setText(rs.getString("username"));
+                    } else {
+                        JOptionPane.showMessageDialog(this, "User not found in the database.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(this, "Error loading user details: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private boolean showConfirmationDialog(String message, String title) {
@@ -44,6 +92,7 @@ public class Homepage extends javax.swing.JFrame {
         dispose(); // or this.setVisible(false);
         openFrame(targetFrame);
     }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -57,6 +106,8 @@ public class Homepage extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
+        btnStartInventory = new javax.swing.JButton();
+        OutputUsername = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
         menuInventaris = new javax.swing.JMenuItem();
@@ -67,43 +118,72 @@ public class Homepage extends javax.swing.JFrame {
         menuKeluar = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Home");
+        setResizable(false);
 
-        jLabel1.setFont(new java.awt.Font("Poppins SemiBold", 0, 36)); // NOI18N
-        jLabel1.setForeground(new java.awt.Color(51, 0, 153));
-        jLabel1.setText("Selamat Datang User");
+        ContainerWelcome.setBackground(new java.awt.Color(255, 255, 255));
+
+        jLabel1.setFont(new java.awt.Font("Poppins SemiBold", 0, 24)); // NOI18N
+        jLabel1.setForeground(new java.awt.Color(0, 51, 153));
+        jLabel1.setText("Selamat Datang,");
 
         jLabel2.setIcon(new javax.swing.ImageIcon("C:\\Users\\acer\\Documents\\NetBeansProjects\\TableGUI2\\InventoryApp\\src\\main\\java\\assets\\welcome\\Welcome.png")); // NOI18N
 
         jLabel3.setFont(new java.awt.Font("Helvetica", 0, 18)); // NOI18N
         jLabel3.setText("Atur Barangmu Lebih Mudah!");
 
+        btnStartInventory.setBackground(new java.awt.Color(0, 51, 153));
+        btnStartInventory.setFont(new java.awt.Font("Poppins SemiBold", 0, 18)); // NOI18N
+        btnStartInventory.setForeground(new java.awt.Color(255, 255, 255));
+        btnStartInventory.setText("Mulai Sekarang!");
+        btnStartInventory.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnStartInventoryActionPerformed(evt);
+            }
+        });
+
+        OutputUsername.setFont(new java.awt.Font("Poppins SemiBold", 0, 24)); // NOI18N
+        OutputUsername.setForeground(new java.awt.Color(0, 51, 153));
+
         javax.swing.GroupLayout ContainerWelcomeLayout = new javax.swing.GroupLayout(ContainerWelcome);
         ContainerWelcome.setLayout(ContainerWelcomeLayout);
         ContainerWelcomeLayout.setHorizontalGroup(
             ContainerWelcomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ContainerWelcomeLayout.createSequentialGroup()
-                .addGap(0, 48, Short.MAX_VALUE)
-                .addComponent(jLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 402, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(35, 35, 35))
             .addGroup(ContainerWelcomeLayout.createSequentialGroup()
-                .addGap(106, 106, 106)
-                .addComponent(jLabel2)
+                .addGroup(ContainerWelcomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(ContainerWelcomeLayout.createSequentialGroup()
+                        .addGap(107, 107, 107)
+                        .addComponent(jLabel2))
+                    .addGroup(ContainerWelcomeLayout.createSequentialGroup()
+                        .addGap(141, 141, 141)
+                        .addComponent(btnStartInventory, javax.swing.GroupLayout.PREFERRED_SIZE, 208, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ContainerWelcomeLayout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(112, 112, 112))
+                .addContainerGap(80, Short.MAX_VALUE)
+                .addGroup(ContainerWelcomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ContainerWelcomeLayout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(OutputUsername, javax.swing.GroupLayout.PREFERRED_SIZE, 147, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ContainerWelcomeLayout.createSequentialGroup()
+                        .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 258, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(77, 77, 77))))
         );
         ContainerWelcomeLayout.setVerticalGroup(
             ContainerWelcomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, ContainerWelcomeLayout.createSequentialGroup()
-                .addGap(17, 17, 17)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(13, 13, 13)
+                .addGroup(ContainerWelcomeLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(OutputUsername, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 19, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(20, 20, 20)
                 .addComponent(jLabel2)
-                .addGap(80, 80, 80))
+                .addGap(40, 40, 40)
+                .addComponent(btnStartInventory, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(44, Short.MAX_VALUE))
         );
 
         jMenu1.setText("Pilih Menu");
@@ -178,7 +258,7 @@ public class Homepage extends javax.swing.JFrame {
 
     private void menuInventarisActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuInventarisActionPerformed
         // TODO add your handling code here:
-        transitionTo(new InventoryAppModel());
+        openInventaris();
     }//GEN-LAST:event_menuInventarisActionPerformed
 
     private void menuTentangActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuTentangActionPerformed
@@ -188,7 +268,7 @@ public class Homepage extends javax.swing.JFrame {
 
     private void menuProfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuProfilActionPerformed
         // TODO add your handling code here:
-        openFrame(new Profil());
+        openProfil();
     }//GEN-LAST:event_menuProfilActionPerformed
 
     private void menuLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLogoutActionPerformed
@@ -205,6 +285,11 @@ public class Homepage extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Anda telah keluar dari program. Terimakasih.", "Info", JOptionPane.INFORMATION_MESSAGE);
         }
     }//GEN-LAST:event_menuKeluarActionPerformed
+
+    private void btnStartInventoryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnStartInventoryActionPerformed
+        // TODO add your handling code here:
+        transitionTo(new InventoryAppModel());
+    }//GEN-LAST:event_btnStartInventoryActionPerformed
 
     /**
      * @param args the command line arguments
@@ -243,6 +328,8 @@ public class Homepage extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel ContainerWelcome;
+    private javax.swing.JLabel OutputUsername;
+    private javax.swing.JButton btnStartInventory;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
