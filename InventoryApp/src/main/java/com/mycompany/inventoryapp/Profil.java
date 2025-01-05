@@ -52,7 +52,7 @@ public class Profil extends javax.swing.JFrame {
                         OutputUsername.setText(rs.getString("username"));
                         OutputEmail.setText(rs.getString("email"));
                     } else {
-                        JOptionPane.showMessageDialog(this, "User not found in the database.", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "User tidak ditemukan pada database.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
@@ -198,11 +198,11 @@ public class Profil extends javax.swing.JFrame {
 
     private void btnUbahDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahDataActionPerformed
         // TODO add your handling code here:
-        String newUsername = JOptionPane.showInputDialog(this, "Enter new username (Leave blank to keep current):", "Change Username", JOptionPane.PLAIN_MESSAGE);
-        String newEmail = JOptionPane.showInputDialog(this, "Enter new email (Leave blank to keep current):", "Change Email", JOptionPane.PLAIN_MESSAGE);
+        String newUsername = JOptionPane.showInputDialog(this, "Masukkan username baru (Kosongkan untuk tidak mengubah username):", "Ubah Username", JOptionPane.PLAIN_MESSAGE);
+        String newEmail = JOptionPane.showInputDialog(this, "Masukkan Email Baru (Kosongkan untuk tidak mengubah email):", "Ubah Email", JOptionPane.PLAIN_MESSAGE);
 
         if ((newUsername == null || newUsername.trim().isEmpty()) && (newEmail == null || newEmail.trim().isEmpty())) {
-            JOptionPane.showMessageDialog(this, "No changes were made.", "Info", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Tidak ada perubahan.", "Info", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
@@ -234,10 +234,10 @@ public class Profil extends javax.swing.JFrame {
 
                 int rowsUpdated = stmt.executeUpdate();
                 if (rowsUpdated > 0) {
-                    JOptionPane.showMessageDialog(this, "User data updated successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Data user berhasil diperbarui.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
                     loadUserDetails(userId); // Refresh displayed details
                 } else {
-                    JOptionPane.showMessageDialog(this, "No changes were made.", "Info", JOptionPane.INFORMATION_MESSAGE);
+                    JOptionPane.showMessageDialog(this, "Tidak ada perubahan.", "Info", JOptionPane.INFORMATION_MESSAGE);
                 }
             }
         } catch (SQLException e) {
@@ -247,10 +247,10 @@ public class Profil extends javax.swing.JFrame {
 
     private void btnUbahPassActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnUbahPassActionPerformed
         // TODO add your handling code here:
-        String currentPassword = JOptionPane.showInputDialog(this, "Enter current password:", "Verify Identity", JOptionPane.PLAIN_MESSAGE);
+        String currentPassword = JOptionPane.showInputDialog(this, "Masukkan password anda saat ini:", "Verifikasi Identitas", JOptionPane.PLAIN_MESSAGE);
 
         if (currentPassword == null || currentPassword.trim().isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Password verification cancelled.", "Info", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Verifikasi password dibatalkan.", "Info", JOptionPane.INFORMATION_MESSAGE);
             return;
         }
 
@@ -260,25 +260,25 @@ public class Profil extends javax.swing.JFrame {
                 stmt.setInt(1, userId); // Replace userId with the actual logged-in user's ID.
                 try (ResultSet rs = stmt.executeQuery()) {
                     if (rs.next() && rs.getString("password").equals(currentPassword.trim())) {
-                        String newPassword = JOptionPane.showInputDialog(this, "Enter new password:", "Change Password", JOptionPane.PLAIN_MESSAGE);
+                        String newPassword = JOptionPane.showInputDialog(this, "Masukkan password baru:", "Ganti Password", JOptionPane.PLAIN_MESSAGE);
                         if (newPassword != null && !newPassword.trim().isEmpty()) {
                             String updateQuery = "UPDATE users SET password = ? WHERE id = ?";
                             try (PreparedStatement updateStmt = conn.prepareStatement(updateQuery)) {
                                 updateStmt.setString(1, newPassword.trim());
                                 updateStmt.setInt(2, userId);
                                 updateStmt.executeUpdate();
-                                JOptionPane.showMessageDialog(this, "Password updated successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
+                                JOptionPane.showMessageDialog(this, "Password berhasil diperbarui.", "Sukses", JOptionPane.INFORMATION_MESSAGE);
                             }
                         } else {
-                            JOptionPane.showMessageDialog(this, "Password change cancelled.", "Info", JOptionPane.INFORMATION_MESSAGE);
+                            JOptionPane.showMessageDialog(this, "Ubah password dibatalkan.", "Info", JOptionPane.INFORMATION_MESSAGE);
                         }
                     } else {
-                        JOptionPane.showMessageDialog(this, "Incorrect password. Verification failed.", "Error", JOptionPane.ERROR_MESSAGE);
+                        JOptionPane.showMessageDialog(this, "Password salah. Verifikasi Gagal.", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 }
             }
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(this, "Error verifying or updating password: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Error verifikasi atau perbarui password: " + e.getMessage(), "Database Error", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btnUbahPassActionPerformed
 

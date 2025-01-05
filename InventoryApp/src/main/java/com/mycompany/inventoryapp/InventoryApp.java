@@ -14,7 +14,6 @@ public class InventoryApp {
         start.setVisible(true);
 
         start.pack();
-        start.setLocationRelativeTo(null);
         start.setDefaultCloseOperation(Login.EXIT_ON_CLOSE);
     }
 }
