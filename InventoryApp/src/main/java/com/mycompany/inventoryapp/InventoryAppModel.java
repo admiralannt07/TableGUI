@@ -344,6 +344,14 @@ public class InventoryAppModel extends javax.swing.JFrame {
         frame.setVisible(true);
         frame.setLocationRelativeTo(null);
     }
+    
+    private void openProfil() {
+        Profil profil = new Profil(userId); // Pass the userId
+        profil.setVisible(true);
+        profil.setLocationRelativeTo(null);
+        
+        this.setVisible(false);
+    }
 
     private boolean showConfirmationDialog(String message, String title) {
         int confirm = JOptionPane.showConfirmDialog(this, message, title, JOptionPane.YES_NO_OPTION);
@@ -1037,7 +1045,7 @@ public class InventoryAppModel extends javax.swing.JFrame {
 
     private void menuProfilActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuProfilActionPerformed
         // TODO add your handling code here:
-        openFrame(new Profil());
+        openProfil();
     }//GEN-LAST:event_menuProfilActionPerformed
 
     private void menuLogoutActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuLogoutActionPerformed
