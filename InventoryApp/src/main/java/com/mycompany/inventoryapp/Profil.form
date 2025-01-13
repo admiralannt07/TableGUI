@@ -51,9 +51,9 @@
                               <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
-                          <Group type="103" groupAlignment="0" attributes="0">
-                              <Component id="OutputUsername" min="-2" pref="164" max="-2" attributes="0"/>
-                              <Component id="OutputEmail" min="-2" pref="233" max="-2" attributes="0"/>
+                          <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                              <Component id="OutputEmail" pref="306" max="32767" attributes="0"/>
+                              <Component id="OutputUsername" max="32767" attributes="0"/>
                           </Group>
                       </Group>
                       <Group type="102" alignment="0" attributes="0">
@@ -63,7 +63,7 @@
                           <Component id="btnUbahPass" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
-                  <EmptySpace pref="100" max="32767" attributes="0"/>
+                  <EmptySpace pref="40" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -85,7 +85,7 @@
                       <Component id="btnUbahData" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="btnUbahPass" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
-                  <EmptySpace pref="95" max="32767" attributes="0"/>
+                  <EmptySpace pref="98" max="32767" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -209,11 +209,6 @@
           </Properties>
         </Component>
         <Component class="javax.swing.JLabel" name="jLabel6">
-          <Properties>
-            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
-              <Image iconType="2" name="C:\Users\acer\Documents\NetBeansProjects\TableGUI2\InventoryApp\src\main\java\assets\welcome\usersettings.png"/>
-            </Property>
-          </Properties>
         </Component>
       </SubComponents>
     </Container>
