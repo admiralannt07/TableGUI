@@ -133,6 +133,11 @@ public class Login extends javax.swing.JFrame {
                 txtusernameFocusLost(evt);
             }
         });
+        txtusername.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtusernameActionPerformed(evt);
+            }
+        });
 
         txtPassword.setFont(new java.awt.Font("Poppins", 0, 14)); // NOI18N
         txtPassword.setForeground(new java.awt.Color(153, 153, 153));
@@ -341,6 +346,10 @@ public class Login extends javax.swing.JFrame {
         // TODO add your handling code here:
         forgotPassword();
     }//GEN-LAST:event_btnForgotPasswordMouseClicked
+
+    private void txtusernameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtusernameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtusernameActionPerformed
 
     /**
      * @param args the command line arguments

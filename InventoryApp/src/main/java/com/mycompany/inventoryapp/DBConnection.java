@@ -27,4 +27,14 @@ public class DBConnection {
             throw new RuntimeException("Failed to connect to the database.");
         }
     }
+    
+     public static void disconnect(Connection conn) {
+        try {
+            if (conn != null) {
+                conn.close();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
 }
